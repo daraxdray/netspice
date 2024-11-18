@@ -8,7 +8,6 @@ ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PAT
 RUN mkdir -p /app/flutter-app
 COPY . /app/flutter-app
 WORKDIR /app/flutter-app
-RUN mv flutter-app-shared /app
 RUN flutter build web
 
 # Stage 2 - Create the run-time image
