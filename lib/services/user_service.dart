@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:my_tom/classes/User.dart';
-import 'package:rxdart/subjects.dart';
+import 'package:rxdart/rxdart.dart';
 
 class UserService extends GetxService {
   final BehaviorSubject<User> _myUserDetails = BehaviorSubject<User>();
