@@ -1,0 +1,8 @@
+include:
+  - project: "denk-doch-digital/devops/gitlab-ci"
+    ref: "main"
+    file: "templates/docker.yml"
+
+variables:
+  PROJECT_DIRECTORY: "my-tomcat"
+  IMAGE_TAG_PARAMETER: "static-webapp.image.tag"
