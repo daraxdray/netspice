@@ -1,7 +1,7 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
+import 'package:my_tom/core/services/Auth/auth_service.dart';
 
 class MobileAuthService extends AuthService {
   final Dio _dio = Get.find<Dio>();

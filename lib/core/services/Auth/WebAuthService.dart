@@ -3,7 +3,7 @@ import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
+import 'package:my_tom/core/services/Auth/auth_service.dart';
 
 class WebAuthService extends AuthService {
   final Dio _dio = Get.find<Dio>();

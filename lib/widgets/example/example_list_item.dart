@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_tom/classes/MyExampleDataObject.dart';
+import 'package:my_tom/data/models/MyExampleDataObject.dart';
 
 class ExampleListItemWidget extends StatelessWidget {
   final MyExampleDataObject exampleDataObject;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/classes/MyExampleDataObject.dart';
-import 'package:my_tom/services/example_service.dart';
+import 'package:my_tom/data/models/MyExampleDataObject.dart';
+import 'package:my_tom/core/services/example_service.dart';
 import 'package:my_tom/widgets/example/example_list_item.dart';
 
 class ExampleController extends GetxController {

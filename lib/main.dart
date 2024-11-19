@@ -3,15 +3,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_tom/core/constants/app_constants.dart';
+import 'package:my_tom/core/routes/app_pages.dart';
 import 'package:my_tom/screens/General/BottomNavigationPage.dart';
 import 'package:my_tom/screens/General/WebAuth.dart';
 import 'package:my_tom/screens/Intro/IntroPage.dart';
-import 'package:my_tom/services/Auth/MobileAuthService.dart';
-import 'package:my_tom/services/Auth/WebAuthService.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
-import 'package:my_tom/services/example_service.dart';
-import 'package:my_tom/services/first_run_helper_service.dart';
-import 'package:my_tom/services/user_service.dart';
+import 'package:my_tom/core/services/Auth/MobileAuthService.dart';
+import 'package:my_tom/core/services/Auth/WebAuthService.dart';
+import 'package:my_tom/core/services/Auth/auth_service.dart';
+import 'package:my_tom/core/services/example_service.dart';
+import 'package:my_tom/core/services/first_run_helper_service.dart';
+import 'package:my_tom/core/services/user_service.dart';
+import 'package:my_tom/screens/Intro/binding/intro_binding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 dynamic _parseAndDecode(String response) {
@@ -24,7 +27,7 @@ Future<dynamic> parseJson(String text) {
 
 Future<void> initServices() async {
   Get.put(await SharedPreferences.getInstance());
-
+  Get.put(FirstRunHelperService());
   Dio dio = Dio();
   Get.put(dio);
   dio.interceptors.add(InterceptorsWrapper(
@@ -70,30 +73,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   bool firstRun = await Get.find<FirstRunHelperService>().isFirstRun();
-
+  
   runApp(GetMaterialApp(
-    title: "My App Web-App",
+    title: AppConstants.appName,
     color: Colors.green,
     theme: ThemeData(primaryColor: Colors.green, appBarTheme: const AppBarTheme(color: Colors.green), bottomAppBarTheme: BottomAppBarTheme(color: Colors.green)),
     debugShowCheckedModeBanner: false,
     initialRoute: (firstRun) ? '/intro' : '/',
     defaultTransition: Transition.fade,
-    getPages: [
-      GetPage(
-        name: '/',
-        page: () => const BottomNavigationPage(),
-        binding: BottomNavigationBinding(),
-      ),
-      GetPage(
-        name: '/webauth/:code',
-        page: () => const WebAuthPage(),
-        binding: WebAuthBinding(),
-      ),
-      GetPage(
-        name: '/intro',
-        page: () => const IntroPage(),
-        binding: IntroBinding(),
-      )
-    ],
+    getPages: AppPages.routes,
   ));
 }

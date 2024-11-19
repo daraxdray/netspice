@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/helper/showNotLoggedInDialog.dart';
+import 'package:my_tom/core/helper/showNotLoggedInDialog.dart';
 import 'package:my_tom/screens/Example/ExamplePage.dart';
 import 'package:my_tom/screens/Home/HomePage.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
+import 'package:my_tom/core/services/Auth/auth_service.dart';
 
 class BottomNavigationBinding extends Bindings {
   @override

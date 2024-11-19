@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
+import 'package:my_tom/core/services/Auth/auth_service.dart';
 
 class WebAuthBinding extends Bindings {
   @override

@@ -1,164 +1,166 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_tom/services/Auth/auth_service.dart';
-import 'package:my_tom/services/first_run_helper_service.dart';
-import 'package:my_tom/services/user_service.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:my_tom/core/constants/app_constants.dart';
+import 'package:my_tom/core/routes/app_routes.dart';
+import 'package:my_tom/core/theme/custom_text_style.dart';
+import 'package:my_tom/data/models/model_exports.dart';
+import 'package:my_tom/widgets/custom_image_view.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class IntroBinding extends Bindings {
+class IntroScreen extends StatefulWidget {
   @override
-  void dependencies() {
-    Get.lazyPut(() => IntroController());
-  }
+  _IntroScreenState createState() => _IntroScreenState();
 }
 
-class IntroController extends GetxController {
-  static IntroController get to => Get.find();
+class _IntroScreenState extends State<IntroScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
-  final AuthService _authService = Get.find();
-  final UserService _userService = Get.find();
-  final FirstRunHelperService firstRunHelperService = Get.find();
-
-  Future<void> loginAction() async {
-    await _authService.loginAction();
-    if (await _authService.checkIfLoggedIn() == true) {
-      if ((await _userService.isUserAccountCreated()) == true) {
-        firstRunHelperService.setFirstRun();
-        Get.offAndToNamed("/");
-      } else {
-        Get.toNamed("/intro/setup");
-      }
-    }
-  }
-}
-
-class IntroPage extends GetView<IntroController> {
-  const IntroPage({super.key});
-
+  final List<IntroData> _onboardingPages = AppConstants.onboardingPages;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+      body: SafeArea(
+        child: Stack(
           children: [
-            const Expanded(
-                child: Padding(
-              padding: EdgeInsets.all(50),
-              child: SafeArea(child: Image(image: AssetImage('assets/logo.png'))),
-            )),
-            Container(height: 100),
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.green.withAlpha(0),
-                  Colors.green.withAlpha(0),
-                  Colors.green.withAlpha(50),
-                  Colors.green.withAlpha(100),
-                  Colors.green.withAlpha(150),
+            PageView.builder(
+              controller: _pageController,
+              itemCount: _onboardingPages.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return _buildIntroPage(_onboardingPages[index]);
+              },
+            ),
+            
+            // Bottom Navigation
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  SmoothPageIndicator(
+                    controller: _pageController,
+                    count: _onboardingPages.length,
+                    effect: WormEffect(
+                      dotColor: Colors.grey.shade300,
+                      activeDotColor: Colors.deepPurple,
+                      dotHeight: 10,
+                      dotWidth: 10,
+                    ),
+                  ),
+                const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _currentPage != 0
+                            ? TextButton(
+                                onPressed: () {
+                                  _pageController.previousPage(
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                child: Text('Previous', style: CustomTextStyles.normalBlack.copyWith(color: Colors.white),),
+                              )
+                            : const SizedBox.shrink(),
+                        _currentPage == _onboardingPages.length - 1
+                            ? ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  // primary: Colors.deepPurple,
+                                  padding:const EdgeInsets.symmetric(
+                                    horizontal: 40,
+                                    vertical: 15,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  // Navigate to Login/Registration
+                                  Get.toNamed(AppRoutes.splash);
+                                },
+                                child: Text(
+                                  'Get Started',
+                                  style: CustomTextStyles.greyBold,
+                                ),
+                              )
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  // primary: Colors.deepPurple,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(15),
+                                ),
+                                onPressed: () {
+                                  _pageController.nextPage(
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                child: Icon(Icons.arrow_forward),
+                              ),
+                      ],
+                    ),
+                  ),
                 ],
-              )),
+              ),
             ),
           ],
         ),
-        SafeArea(
-          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-            SizedBox(
-              height: 350,
-              child: Column(
-                children: [
-                  const Text("My App", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.green)),
-                  Container(height: 15),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25, right: 25),
-                    child: Text(
-                      "Some example text to explain what this app is about and why you should use it. Some example text to explain what this app is about and why you should use it.",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Container(height: 60),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => controller.loginAction(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // <-- Radius
-                          ),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(top: 15, bottom: 15, right: 15, left: 15),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Login / Register',
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 25,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          controller.firstRunHelperService.setFirstRun();
-                          Get.offAndToNamed("/");
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // <-- Radius
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 5, left: 5),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Without Login',
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: Theme.of(context).primaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(height: 20),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        launchUrl(Uri.parse("https://example.com/agbs.html"));
-                      },
-                      child: const Text(
-                        "With using this app you agree to our terms and conditions",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
-                ],
+      ),
+    );
+  }
+
+  Widget _buildIntroPage(IntroData page) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: page.gradient,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            page.iconData,
+            size: 100,
+            color: Colors.white,
+          ),
+          SizedBox(height: 30),
+          Text(
+            page.title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              page.description,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
               ),
-            )
-          ]),
-        )
-      ],
-    ));
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 50),
+          CustomImageView(imagePath: page.image, height: 250, width: 450,)
+        ],
+      ),
+    );
   }
 }
+

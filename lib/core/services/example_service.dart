@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/instance_manager.dart';
-import 'package:my_tom/classes/MyExampleDataObject.dart';
+import 'package:my_tom/data/models/MyExampleDataObject.dart';
 
 class ExampleService {
   final Dio _dio = Get.find<Dio>();
